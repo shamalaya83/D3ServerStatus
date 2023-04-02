@@ -97,7 +97,7 @@
             this.buttonVote.Name = "buttonVote";
             this.buttonVote.Size = new System.Drawing.Size(54, 23);
             this.buttonVote.TabIndex = 6;
-            this.buttonVote.Text = "Vote";
+            this.buttonVote.Text = "Rate";
             this.buttonVote.UseVisualStyleBackColor = true;
             this.buttonVote.Click += new System.EventHandler(this.buttonVote_Click);
             // 
