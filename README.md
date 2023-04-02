@@ -10,4 +10,4 @@ excellent => no lag: 3 or more elites and mobs
 
 # D3ServerStatus TurboHUD
 Simple collaborative th plugin to keep track of D3 servers status
-![Screenshot of the app](https://github.com/shamalaya83/D3ServerStatus/blob/main/imageTH.png)
+![Screenshot of the app](https://github.com/shamalaya83/D3ServerStatus/blob/main/ImmagineTH.png)
