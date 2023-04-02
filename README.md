@@ -17,6 +17,12 @@ Simple collaborative th plugin to keep track of D3 servers status
 
 TH plugin [GameServerStatusPlugin.cs](https://github.com/shamalaya83/D3ServerStatus/blob/main/TurboHUD/GameServerStatusPlugin.cs)  
 
+Color:  
+red -> bad  
+yellow -> laggy  
+green -> good  
+purple -> excellent  
+
 To rate the current server, type the following command in chat when in town:  
 cmd: \s rating   where rating: 1 bad, 2, laggy, 3 good, 4 excellent  
 Example: \s 3  
