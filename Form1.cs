@@ -15,6 +15,7 @@ namespace D3ServerStatus
         // D3 server infos
         private string connectedServerIP = null;
         private int rating = -1;
+        private int nvotes = 0;
 
         // server rating client
         private static MyClient client = new MyClient("35.159.16.254", 3000);
@@ -31,6 +32,12 @@ namespace D3ServerStatus
         public Form1()
         {
             InitializeComponent();
+
+            // tooltips
+            new ToolTip().SetToolTip(this.rateButtonBad, "unplayable: server lags everywhere even in town or with few mobs");
+            new ToolTip().SetToolTip(this.rateButtonLag, "lags but still playable: max 1 elite and few mobs around");
+            new ToolTip().SetToolTip(this.rateButtonGood, "the server sometimes lags but you can definitely play on it: max 2 elites and mobs");
+            new ToolTip().SetToolTip(this.rateButtonExcellent, "no lag: 3 or more elites and mobs");
 
             // reset
             ResetServerStatus();
@@ -131,6 +138,7 @@ namespace D3ServerStatus
                 // reset server info
                 connectedServerIP = currentServerIP;
                 rating = -1;
+                nvotes = 0;
 
                 // reset counter
                 counter = 0;
@@ -162,6 +170,7 @@ namespace D3ServerStatus
                     // save server info
                     connectedServerIP = currentServerIP;
                     rating = Int32.Parse(ris["rating"].ToString());
+                    nvotes = Int32.Parse(ris["nvotes"].ToString());
                     return;
                 }
                 else
@@ -277,7 +286,7 @@ namespace D3ServerStatus
                 case 0:
                     {
                         this.currentserverip.Text = connectedServerIP;
-                        this.serverrating.Text = "not reviewed";
+                        this.serverrating.Text = $"not reviewed ({nvotes})";
                         this.serverrating.ForeColor = System.Drawing.Color.DarkGray;
                         this.groupBoxRate.Enabled = true;
                         break;
@@ -285,7 +294,7 @@ namespace D3ServerStatus
                 case 1:
                     {
                         this.currentserverip.Text = connectedServerIP;
-                        this.serverrating.Text = "bad";
+                        this.serverrating.Text = $"bad ({nvotes})";
                         this.serverrating.ForeColor = System.Drawing.Color.Red;
                         this.groupBoxRate.Enabled = true;
                         break;
@@ -293,7 +302,7 @@ namespace D3ServerStatus
                 case 2:
                     {
                         this.currentserverip.Text = connectedServerIP;
-                        this.serverrating.Text = "laggy";
+                        this.serverrating.Text = $"laggy ({nvotes})"; 
                         this.serverrating.ForeColor = System.Drawing.Color.DarkOrange;
                         this.groupBoxRate.Enabled = true;
                         break;
@@ -301,7 +310,7 @@ namespace D3ServerStatus
                 case 3:
                     {
                         this.currentserverip.Text = connectedServerIP;
-                        this.serverrating.Text = "good";
+                        this.serverrating.Text = $"good ({nvotes})";
                         this.serverrating.ForeColor = System.Drawing.Color.Green;
                         this.groupBoxRate.Enabled = true;
                         break;
@@ -309,7 +318,7 @@ namespace D3ServerStatus
                 case 4:
                     {
                         this.currentserverip.Text = connectedServerIP;
-                        this.serverrating.Text = "excellent";
+                        this.serverrating.Text = $"excellent ({nvotes})";
                         this.serverrating.ForeColor = System.Drawing.Color.Purple;
                         this.groupBoxRate.Enabled = true;
                         break;

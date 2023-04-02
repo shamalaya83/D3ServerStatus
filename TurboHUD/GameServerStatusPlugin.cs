@@ -48,6 +48,7 @@ namespace Turbo.Plugins.Default
 
         // Current server rate
         private int rate = -1;
+        private int nvotes = 0;
         private const int FORCE_CHECK = 20;
         private Stopwatch lastServerCall = new Stopwatch();
 
@@ -78,31 +79,31 @@ namespace Turbo.Plugins.Default
             ServerIpAddressDecoratorNoEntry = new TopLabelDecorator(Hud)
             {
                 TextFont = Hud.Render.CreateFont("tahoma", 6, 255, 255, 255, 255, false, false, true),
-                TextFunc = () => currentServerIP,
+                TextFunc = () => $"({nvotes}) {currentServerIP}",
             };
 
             ServerIpAddressDecoratorBad = new TopLabelDecorator(Hud)
             {
                 TextFont = Hud.Render.CreateFont("tahoma", 6, 255, 255, 0, 0, false, false, true),
-                TextFunc = () => currentServerIP,
+                TextFunc = () => $"({nvotes}) {currentServerIP}",
             };
 
             ServerIpAddressDecoratorLaggy = new TopLabelDecorator(Hud)
             {
                 TextFont = Hud.Render.CreateFont("tahoma", 6, 255, 255, 204, 0, false, false, true),
-                TextFunc = () => currentServerIP,
+                TextFunc = () => $"({nvotes}) {currentServerIP}",
             };
 
             ServerIpAddressDecoratorGood = new TopLabelDecorator(Hud)
             {
                 TextFont = Hud.Render.CreateFont("tahoma", 6, 255, 14, 255, 3, false, false, true),
-                TextFunc = () => currentServerIP,
+                TextFunc = () => $"({nvotes}) {currentServerIP}",
             };
 
             ServerIpAddressDecoratorExcellent = new TopLabelDecorator(Hud)
             {
                 TextFont = Hud.Render.CreateFont("tahoma", 6, 255, 255, 3, 232, false, false, true),
-                TextFunc = () => currentServerIP,
+                TextFunc = () => $"({nvotes}) {currentServerIP}",
             };
         }
 
@@ -126,6 +127,7 @@ namespace Turbo.Plugins.Default
                     // reset server info
                     currentServerIP = null;
                     rate = -1;
+                    nvotes = 0;
 
                     // retrive d3 server ip
                     var ip = IPGlobalProperties.GetIPGlobalProperties();
@@ -156,7 +158,8 @@ namespace Turbo.Plugins.Default
                         if ("OK".Equals(ris["result"].ToString()))
                         {
                             rate = Int32.Parse(ris["rating"].ToString());
-                            Hud.TextLog.Log("GameServerStatusPlugin", $"Server IP: {currentServerIP} - score: {rate}");
+                            nvotes = Int32.Parse(ris["nvotes"].ToString());
+                            Hud.TextLog.Log("GameServerStatusPlugin", $"Server IP: {currentServerIP} - score: {rate} - nvotes: {nvotes}");
                         }
                         else
                         {
@@ -261,8 +264,9 @@ namespace Turbo.Plugins.Default
                 indexMe = Hud.Game.Me.Index;
 
                 // reset server score
-                currentServerIP = null;
+                currentServerIP = null;                
                 rate = -1;
+                nvotes = 0;
             }
         }
 
