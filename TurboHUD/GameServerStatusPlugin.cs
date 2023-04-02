@@ -26,7 +26,7 @@ using System.Net.NetworkInformation;
 namespace Turbo.Plugins.Default
 {
     public class GameServerStatusPlugin : BasePlugin, ICustomizer, IInGameTopPainter, IChatLineChangedHandler, INewAreaHandler
-    {       
+    {
         private TopLabelDecorator GameClockDecorator { get; set; }
 
         // Server decorators
@@ -119,7 +119,7 @@ namespace Turbo.Plugins.Default
             GameClockDecorator.Paint(uiRect.Left, uiRect.Top + (uiRect.Height * 1.15f), uiRect.Width, uiRect.Height * 0.7f, HorizontalAlign.Right);
 
             if (Hud.Game.IsInTown)
-            {                
+            {
                 // if no server score or enough time elapsed
                 if (rate == -1 || lastServerCall.Elapsed.TotalSeconds > FORCE_CHECK)
                 {
@@ -202,14 +202,14 @@ namespace Turbo.Plugins.Default
                 // new msg
                 if (!currentLine.Equals(previousLine))
                 {
-                    Hud.TextLog.Log("GameServerStatusPlugin", "CL: " + currentLine);
+                    // Hud.TextLog.Log("GameServerStatusPlugin", "CL: " + currentLine);
 
-                    Match m = Regex.Match(currentLine, "(?:h\\[(.*)\\])\\|(?:h\\:(.*))");
+                    Match m = Regex.Match(currentLine, @"(?:h\[(.*)\])\|(?:h.*\\s\s([1234])$)");
 
                     if (m.Success)
                     {
                         string user = m.Groups[1].Value;
-                        string msg = m.Groups[2].Value.Trim().ToLower();
+                        string newRate = m.Groups[2].Value;
 
                         string tagname = user;
                         // strip clan name
@@ -220,33 +220,29 @@ namespace Turbo.Plugins.Default
                         if (String.IsNullOrWhiteSpace(tagname)) return;
                         if (!tagname.Equals(Hud.MyBattleTag.Split('#')[0])) return;
 
-                        // check cmd
-                        Match cmd = Regex.Match(msg, @"^\\s\s+([1234])$");
-                        if (cmd.Success)
+                        // post new rate
+                        ServerRating sr = new ServerRating()
                         {
-                            ServerRating sr = new ServerRating()
-                            {
-                                cmd = "POST",
-                                serverIP = currentServerIP,
-                                battletag = FastHash(Hud.MyBattleTag),
-                                rating = Int32.Parse(cmd.Groups[1].Value)
-                            };
+                            cmd = "POST",
+                            serverIP = currentServerIP,
+                            battletag = FastHash(Hud.MyBattleTag),
+                            rating = Int32.Parse(newRate)
+                        };
 
-                            try
+                        try
+                        {
+                            var ris = client.callServer(sr);
+                            if ("OK".Equals(ris["result"].ToString()))
                             {
-                                var ris = client.callServer(sr);
-                                if ("OK".Equals(ris["result"].ToString()))
-                                {
-                                    Hud.TextLog.Log("GameServerStatusPlugin", $"New Rating IP: {currentServerIP} - BTag: {Hud.MyBattleTag} - Rate: {cmd.Groups[1].Value}");
-                                    rate = -1;
-                                }
-                                else
-                                    Hud.TextLog.Log("GameServerStatusPlugin", $"Error: {ris["error"]}");
+                                Hud.TextLog.Log("GameServerStatusPlugin", $"New Rating IP: {currentServerIP} - BTag: {Hud.MyBattleTag} - Rate: {newRate}");
+                                rate = -1;
                             }
-                            catch (Exception e)
-                            {
-                                Hud.TextLog.Log("GameServerStatusPlugin", "Error: " + (e != null ? e.Message : "null"));
-                            }
+                            else
+                                Hud.TextLog.Log("GameServerStatusPlugin", $"Error: {ris["error"]}");
+                        }
+                        catch (Exception e)
+                        {
+                            Hud.TextLog.Log("GameServerStatusPlugin", "Error: " + (e != null ? e.Message : "null"));
                         }
                     }
                 }
@@ -261,7 +257,7 @@ namespace Turbo.Plugins.Default
         {
             if (newGame || indexMe != Hud.Game.Me.Index)
             {
-                Hud.TextLog.Log("GameServerStatusPlugin", "New game started ...");
+                // Hud.TextLog.Log("GameServerStatusPlugin", "New game started ...");
                 indexMe = Hud.Game.Me.Index;
 
                 // reset server score
