@@ -8,6 +8,8 @@ laggy => lags but still playable: max 1 elite and few mobs around
 good => the server sometimes lags but you can definitely play on it: max 2 elites and mobs  
 excellent => no lag: 3 or more elites and mobs  
 
+In brackets the review counter.  
+
 # D3ServerStatus TurboHUD
 Simple collaborative th plugin to keep track of D3 servers status
 
