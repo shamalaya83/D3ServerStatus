@@ -8,7 +8,7 @@ using System.Diagnostics;
 using System.Net.NetworkInformation;
 
 /**
- * Shamalaya - Server Status Plugin
+ * Shamalaya - Server Status Plugin v. 1.0.1
  * 
  * To rate the current server type the following command in chat when in town:
  * (N.B. if u write on group chat ensure there are min 2 players)
@@ -206,7 +206,6 @@ namespace Turbo.Plugins.Default
                 if (!currentLine.Equals(previousLine))
                 {
                     // Hud.TextLog.Log("GameServerStatusPlugin", "CL: " + currentLine);
-
                     Match m = Regex.Match(currentLine, @"(?:h\[(.*)\])\|(?:h.*\\s\s([1234])$)");
 
                     if (m.Success)
