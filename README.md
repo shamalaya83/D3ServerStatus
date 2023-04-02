@@ -13,6 +13,8 @@ Simple collaborative th plugin to keep track of D3 servers status
 
 ![Screenshot of the app](https://github.com/shamalaya83/D3ServerStatus/blob/main/ImmagineTH.png)
 
+TH plugin [GameServerStatusPlugin.cs](https://github.com/shamalaya83/D3ServerStatus/blob/main/TurboHUD/GameServerStatusPlugin.cs)  
+
 To rate the current server, type the following command in chat when in town:  
 cmd: \s rating   where rating: 1 bad, 2, laggy, 3 good, 4 excellent  
 Example: \s 3  
