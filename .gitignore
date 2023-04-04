@@ -3,3 +3,4 @@ packages/*
 obj/*
 .vs/*
 .gitattributes
+backend/*.pem
