@@ -8,7 +8,7 @@ using System.Diagnostics;
 using System.Net.NetworkInformation;
 
 /**
- * Shamalaya - Server Status Plugin v. 1.0.1
+ * Shamalaya - Server Status Plugin v. 1.0.2
  * 
  * To rate the current server type the following command in chat when in town:
  * (N.B. if u write on group chat ensure there are min 2 players)
@@ -21,7 +21,9 @@ using System.Net.NetworkInformation;
  * good (green)         => the server sometimes lags but you can definitely play on it: max 2 elites and mobs  
  * excellent (purple)   => no lag: 3 or more elites and mobs  
  * 
- * When the server ip color is white meaning no rate found.
+ * N.B.
+ * -) When the server ip color is white meaning no rate found.
+ * -) A star symbol near the ip means you rated the server
  */
 namespace Turbo.Plugins.Default
 {
@@ -49,6 +51,8 @@ namespace Turbo.Plugins.Default
         // Current server rate
         private int rate = -1;
         private int nvotes = 0;
+        private bool voted = false;
+
         private const int FORCE_CHECK = 20;
         private Stopwatch lastServerCall = new Stopwatch();
 
@@ -79,31 +83,31 @@ namespace Turbo.Plugins.Default
             ServerIpAddressDecoratorNoEntry = new TopLabelDecorator(Hud)
             {
                 TextFont = Hud.Render.CreateFont("tahoma", 6, 255, 255, 255, 255, false, false, true),
-                TextFunc = () => $"({nvotes}) {currentServerIP}",
+                TextFunc = () => showServerStatus(),
             };
 
             ServerIpAddressDecoratorBad = new TopLabelDecorator(Hud)
             {
                 TextFont = Hud.Render.CreateFont("tahoma", 6, 255, 255, 0, 0, false, false, true),
-                TextFunc = () => $"({nvotes}) {currentServerIP}",
+                TextFunc = () => showServerStatus(),
             };
 
             ServerIpAddressDecoratorLaggy = new TopLabelDecorator(Hud)
             {
                 TextFont = Hud.Render.CreateFont("tahoma", 6, 255, 255, 204, 0, false, false, true),
-                TextFunc = () => $"({nvotes}) {currentServerIP}",
+                TextFunc = () => showServerStatus(),
             };
 
             ServerIpAddressDecoratorGood = new TopLabelDecorator(Hud)
             {
                 TextFont = Hud.Render.CreateFont("tahoma", 6, 255, 14, 255, 3, false, false, true),
-                TextFunc = () => $"({nvotes}) {currentServerIP}",
+                TextFunc = () => showServerStatus(),
             };
 
             ServerIpAddressDecoratorExcellent = new TopLabelDecorator(Hud)
             {
                 TextFont = Hud.Render.CreateFont("tahoma", 6, 255, 255, 3, 232, false, false, true),
-                TextFunc = () => $"({nvotes}) {currentServerIP}",
+                TextFunc = () => showServerStatus(),
             };
         }
 
@@ -128,6 +132,7 @@ namespace Turbo.Plugins.Default
                     currentServerIP = null;
                     rate = -1;
                     nvotes = 0;
+                    voted = false;
 
                     // retrive d3 server ip
                     var ip = IPGlobalProperties.GetIPGlobalProperties();
@@ -151,7 +156,8 @@ namespace Turbo.Plugins.Default
                         ServerRating sr = new ServerRating()
                         {
                             cmd = "GET",
-                            serverIP = currentServerIP
+                            serverIP = currentServerIP,
+                            battletag = FastHash(Hud.MyBattleTag)
                         };
 
                         var ris = client.callServer(sr);
@@ -159,7 +165,8 @@ namespace Turbo.Plugins.Default
                         {
                             rate = Int32.Parse(ris["rating"].ToString());
                             nvotes = Int32.Parse(ris["nvotes"].ToString());
-                            Hud.TextLog.Log("GameServerStatusPlugin", $"Server IP: {currentServerIP} - score: {rate} - nvotes: {nvotes}");
+                            voted = Boolean.Parse(ris["voted"].ToString());
+                            Hud.TextLog.Log("GameServerStatusPlugin", $"Server IP: {currentServerIP} - score: {rate} - nvotes: {nvotes} - voted: {voted}");
                         }
                         else
                         {
@@ -266,6 +273,7 @@ namespace Turbo.Plugins.Default
                 currentServerIP = null;                
                 rate = -1;
                 nvotes = 0;
+                voted = false;
             }
         }
 
@@ -339,6 +347,15 @@ namespace Turbo.Plugins.Default
             }
 
             return hash.ToString("X8");
+        }
+
+        private string showServerStatus()
+        {
+            if(voted)
+            { 
+                return $"{Char.ConvertFromUtf32(0x2606)} ({nvotes}) {currentServerIP}";
+            }
+            return $"({nvotes}) {currentServerIP}";
         }
     }
 }

@@ -26,7 +26,7 @@ const redisClient = redis.createClient({
 const server = net.createServer((socket) => {
 
 	// Client connected
-	console.log('Client connected ...');
+	// console.log('Client connected ...');
 
 	// On data received
 	socket.on('data', (data) => {
@@ -53,9 +53,9 @@ const server = net.createServer((socket) => {
 					console.log('Invalid serverIP param');
 					socket.write(JSON.stringify( { result: 'KO', error: 'Invalid serverIP param' } ));
 					return;
-				}
+				}			
 
-				// Redis qry server string
+				// Redis qry: all server rates
 				const redisSearchString = `server:${serverIP}:*`;
 
 				// Find all keys
@@ -66,10 +66,11 @@ const server = net.createServer((socket) => {
 						return;
 					}
 
+					// no rates for this server
 					if (keys.length === 0) {
-						socket.write(JSON.stringify( { result: 'OK', rating: 0, nvotes: 0 } ));
+						socket.write(JSON.stringify( { result: 'OK', rating: 0, nvotes: 0, voted: false } ));
 						return;
-					}
+					}									
 
 					// mget all values
 					redisClient.mget(keys, (err, ratings) => {
@@ -83,9 +84,12 @@ const server = net.createServer((socket) => {
 						const ratingSum = ratings.reduce((acc, curr) => acc + parseInt(curr), 0);
 						const ratingAvg = ratingSum / ratings.length;
 						const score = Math.round(ratingAvg.toFixed(2));
-
-						console.log(`GET: ${serverIP}:${score} ...`);
-						socket.write(JSON.stringify( { result: 'OK', rating: score, nvotes: ratings.length } ));
+						
+						// User already voted this server?
+						const voted = keys.includes(`server:${serverIP}:${battletag}`);
+											
+						console.log(`GET: ${serverIP}:${score}:${ratings.length}:${voted} ...`);
+						socket.write(JSON.stringify( { result: 'OK', rating: score, nvotes: ratings.length, voted: voted } ));
 						return;
 					});
 				});
@@ -96,8 +100,8 @@ const server = net.createServer((socket) => {
 
 				// Check params
 				if (	(!serverIP || !regex_IP.test(serverIP)) ||
-					(!battletag || !regex_BTAG.test(battletag)) ||
-					(!rating || isNaN(rating) || rating < 1 || rating > 4)) {
+						(!battletag || !regex_BTAG.test(battletag)) ||
+						(!rating || isNaN(rating) || rating < 1 || rating > 4) ) {
 					console.log('Invalid params');
 					socket.write(JSON.stringify( { result: 'KO', error: 'Invalid params' } ));
 					return;
@@ -133,7 +137,7 @@ const server = net.createServer((socket) => {
 
 	// Client disconnected
 	socket.on('close', () => {
-		console.log('Client disconnected.');
+		// console.log('Client disconnected.');
 	});
 });
 
