@@ -37,3 +37,6 @@ Example: \s 3
 
 (N.B. if u write in group chat or in community ensure there are min 2 players)  
 Join community on D3 "D3 Server Status" u can spam command there.  
+
+# Join Discord server
+![Discord Banner](https://discordapp.com/api/guilds/1099376905108586627/widget.png?style=banner1)
