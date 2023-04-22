@@ -8,7 +8,7 @@ using System.Diagnostics;
 using System.Net.NetworkInformation;
 
 /**
- * Shamalaya - Server Status Plugin v. 1.0.2
+ * Shamalaya - Server Status Plugin v. 1.0.3
  * 
  * To rate the current server type the following command in chat when in town:
  * (N.B. if u write on group chat ensure there are min 2 players)
@@ -23,12 +23,16 @@ using System.Net.NetworkInformation;
  * 
  * N.B.
  * -) When the server ip color is white meaning no rate found.
- * -) A star symbol near the ip means you rated the server
+ * -) Star symbol means you rated the server
+ * -) Cross symbol means the last rate is older than 3 days
+ * -) Number betwen compounds indicates number of players that rated the server
  */
 namespace Turbo.Plugins.Default
 {
     public class GameServerStatusPlugin : BasePlugin, ICustomizer, IInGameTopPainter, IChatLineChangedHandler, INewAreaHandler
     {
+        public const string VERSION = "1.0.3";
+
         private TopLabelDecorator GameClockDecorator { get; set; }
 
         // Server decorators
@@ -52,6 +56,7 @@ namespace Turbo.Plugins.Default
         private int rate = -1;
         private int nvotes = 0;
         private bool voted = false;
+        private bool outdated = false;
 
         private const int FORCE_CHECK = 20;
         private Stopwatch lastServerCall = new Stopwatch();
@@ -133,6 +138,7 @@ namespace Turbo.Plugins.Default
                     rate = -1;
                     nvotes = 0;
                     voted = false;
+                    outdated = false;
 
                     // retrive d3 server ip
                     var ip = IPGlobalProperties.GetIPGlobalProperties();
@@ -166,7 +172,8 @@ namespace Turbo.Plugins.Default
                             rate = Int32.Parse(ris["rating"].ToString());
                             nvotes = Int32.Parse(ris["nvotes"].ToString());
                             voted = Boolean.Parse(ris["voted"].ToString());
-                            Hud.TextLog.Log("GameServerStatusPlugin", $"Server IP: {currentServerIP} - score: {rate} - nvotes: {nvotes} - voted: {voted}");
+                            outdated = Boolean.Parse(ris["outdated"].ToString());
+                            Hud.TextLog.Log("GameServerStatusPlugin", $"Server IP: {currentServerIP} - score: {rate} - nvotes: {nvotes} - voted: {voted} - outdated: {outdated}");
                         }
                         else
                         {
@@ -270,10 +277,11 @@ namespace Turbo.Plugins.Default
                 indexMe = Hud.Game.Me.Index;
 
                 // reset server score
-                currentServerIP = null;                
+                currentServerIP = null;
                 rate = -1;
                 nvotes = 0;
                 voted = false;
+                outdated = false;
             }
         }
 
@@ -330,6 +338,7 @@ namespace Turbo.Plugins.Default
 
         private class ServerRating
         {
+            public string version = VERSION;
             public string cmd { get; set; }
             public string serverIP { get; set; }
             public string battletag { get; set; }
@@ -351,11 +360,20 @@ namespace Turbo.Plugins.Default
 
         private string showServerStatus()
         {
-            if(voted)
-            { 
-                return $"{Char.ConvertFromUtf32(0x2606)} ({nvotes}) {currentServerIP}";
+            StringBuilder sb = new StringBuilder();
+
+            if (voted)
+            {
+                sb.Append($"{Char.ConvertFromUtf32(0x2606)} ");
             }
-            return $"({nvotes}) {currentServerIP}";
+
+            if (outdated)
+            {
+                sb.Append($"{Char.ConvertFromUtf32(0x1F547)} ");
+            }
+
+            sb.Append($"({nvotes}) {currentServerIP}");
+            return sb.ToString();
         }
     }
 }

@@ -9,6 +9,9 @@ namespace D3ServerStatus
 {
     public partial class Form1 : Form
     {
+        // version
+        public const string VERSION = "1.0.3";
+
         // device id
         private static string deviceId = FastHash.CalculateUUID();
 
@@ -17,6 +20,7 @@ namespace D3ServerStatus
         private int rating = -1;
         private int nvotes = 0;
         private bool voted = false;
+        private bool outdated = false;
 
         // server rating client
         private static MyClient client = new MyClient("35.159.16.254", 3000);
@@ -141,6 +145,7 @@ namespace D3ServerStatus
                 rating = -1;
                 nvotes = 0;
                 voted = false;
+                outdated = false;
 
                 // reset counter
                 counter = 0;
@@ -174,7 +179,8 @@ namespace D3ServerStatus
                     connectedServerIP = currentServerIP;
                     rating = Int32.Parse(ris["rating"].ToString());
                     nvotes = Int32.Parse(ris["nvotes"].ToString());
-                    voted = Boolean.Parse(ris["voted"].ToString());                  
+                    voted = Boolean.Parse(ris["voted"].ToString());
+                    outdated = Boolean.Parse(ris["outdated"].ToString());
                     return;
                 }
                 else
@@ -298,7 +304,7 @@ namespace D3ServerStatus
                 case 1:
                     {
                         this.currentserverip.Text = connectedServerIP;
-                        this.serverrating.Text = $"{GetVoted()} ({nvotes}) bad";
+                        this.serverrating.Text = $"{GetVoted()}{IsOutdated()}({nvotes}) bad";
                         this.serverrating.ForeColor = System.Drawing.Color.Red;
                         this.groupBoxRate.Enabled = true;
                         break;
@@ -306,7 +312,7 @@ namespace D3ServerStatus
                 case 2:
                     {
                         this.currentserverip.Text = connectedServerIP;
-                        this.serverrating.Text = $"{GetVoted()} ({nvotes}) laggy";
+                        this.serverrating.Text = $"{GetVoted()}{IsOutdated()}({nvotes}) laggy";
                         this.serverrating.ForeColor = System.Drawing.Color.DarkOrange;
                         this.groupBoxRate.Enabled = true;
                         break;
@@ -314,7 +320,7 @@ namespace D3ServerStatus
                 case 3:
                     {
                         this.currentserverip.Text = connectedServerIP;
-                        this.serverrating.Text = $"{GetVoted()} ({nvotes}) good";
+                        this.serverrating.Text = $"{GetVoted()}{IsOutdated()}({nvotes}) good";
                         this.serverrating.ForeColor = System.Drawing.Color.Green;
                         this.groupBoxRate.Enabled = true;
                         break;
@@ -322,7 +328,7 @@ namespace D3ServerStatus
                 case 4:
                     {
                         this.currentserverip.Text = connectedServerIP;
-                        this.serverrating.Text = $"{GetVoted()} ({nvotes}) excellent";
+                        this.serverrating.Text = $"{GetVoted()}{IsOutdated()}({nvotes}) excellent";
                         this.serverrating.ForeColor = System.Drawing.Color.Purple;
                         this.groupBoxRate.Enabled = true;
                         break;
@@ -346,7 +352,12 @@ namespace D3ServerStatus
 
         private string GetVoted()
         {
-            return voted ? Char.ConvertFromUtf32(0x2606) : "";
+            return voted ? Char.ConvertFromUtf32(0x2606) + " " : "";
+        }
+
+        private string IsOutdated()
+        {
+            return outdated ? Char.ConvertFromUtf32(0x1F547) + " " : "";
         }
 
         private void rateButtonBad_CheckedChanged(object sender, EventArgs e)
