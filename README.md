@@ -17,7 +17,9 @@ Simple collaborative th plugin to keep track of D3 servers status
 
 ![Screenshot of the app](https://github.com/shamalaya83/D3ServerStatus/blob/main/ImmagineTH.png)
 
-TH plugin [GameServerStatusPlugin.cs](https://github.com/shamalaya83/D3ServerStatus/blob/main/TurboHUD/GameServerStatusPlugin.cs) (Tier 3)
+TH plugin [GameServerStatusPlugin.cs](https://github.com/shamalaya83/D3ServerStatus/blob/main/TurboHUD/GameServerStatusPlugin.cs) (Tier 3)  
+Put in plugins/default  
+logs are available in logs/GameServerStatusPlugin.txt  
 
 The star symbol means that you have reviewed the server.  
 The cross symbol means that the last rate is older than 3 days, so its better recheck the server.  
