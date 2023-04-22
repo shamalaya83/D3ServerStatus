@@ -39,4 +39,4 @@ Example: \s 3
 Join community on D3 "D3 Server Status" u can spam command there.  
 
 # Join Discord
-![Discord Shield](https://discordapp.com/api/guilds/1099376905108586627/widget.png?style=shield)
+![Discord Banner 3](https://discordapp.com/api/guilds/1099376905108586627/widget.png?style=banner3)  
