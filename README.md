@@ -4,6 +4,7 @@ Simple collaborative app to keep track of D3 servers status
 ![Screenshot of the app](https://github.com/shamalaya83/D3ServerStatus/blob/main/image.png)
 
 The star symbol means that you have reviewed the server.  
+The cross symbol means that the last rate is older than 3 days, so its better recheck the server.  
 In brackets the review counter.  
 
 bad => unplayable: server lags everywhere even in town or with few mobs  
@@ -19,6 +20,7 @@ Simple collaborative th plugin to keep track of D3 servers status
 TH plugin [GameServerStatusPlugin.cs](https://github.com/shamalaya83/D3ServerStatus/blob/main/TurboHUD/GameServerStatusPlugin.cs) (Tier 3)
 
 The star symbol means that you have reviewed the server.  
+The cross symbol means that the last rate is older than 3 days, so its better recheck the server.  
 In brackets the review counter.  
 
 Color:  
